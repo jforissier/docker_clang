@@ -1,0 +1,25 @@
+This project builds Clang (LLVM) from source and publishes the result on the Docker
+Hub. It was put together for the OP-TEE OS progect [1].
+ 
+The supported targets are currently x86_64, arm64 and armhf. The compiler-rt
+builtins library is included for each supported architecture, which is the reason
+why this project exists in the first place. Indeed at the time of this writing the
+x86_64 Ubuntu packages for Clang do *not* include libclang_rt.builtins-aarch64.a
+nor libclang_rt.builtins-armhf.a, but these libraries are needed when compiling
+the OP-TEE OS.
+
+The build is done in a Docker container. The resulting image is to be used
+as an archive, it only contains the Clang compilers and tools in
+/root/clang-<version>.
+
+To fetch and extract Clang from the image:
+
+ $ id=$(docker create jforissier/clang-18.1.6-x86_64)
+ $ docker cp $i:/root/clang-18.1.6 .
+ $ docker rm $i
+ $ docker rmi jforissier/clang-18.1.6-x86_64
+
+Usage: 'make' builds the image, 'make push' builds it and pushes it to the
+Docker Hub.
+
+[1] https://github.com/OP-TEE/optee_os
